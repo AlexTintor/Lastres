@@ -1,0 +1,172 @@
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Constancia de participación en cuerpos colegiados', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_Semestre": "",
+  "Var_NumDictamen": "",
+  "Var_TotalAlumnos": "",
+  "Var_AlumnosConCredito": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_DEPARTAMENTO_ACADEMICO": "",
+  "VAR_JEFE_DEPARTAMENTO_ACADEMICO": "",
+  "Var_PuestoJefaDpto": "",
+  "VAR_FIRMA_CENTRO_DE_INFORMACION": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "VAR_JEFE_CENTRO_DE_INFORMACION": "",
+  "Var_PuestoJefeCentro": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Recursos educativos digitales', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_Semestre": "",
+  "Var_Asignatura": "",
+  "Var_ProgramaNombre": "",
+  "Var_Sello": "",
+  "VAR_JEFE_DEPARTAMENTO_ACADEMICO": "",
+  "Var_PuestoJefa": "",
+  "VAR_FIRMA_DEPARTAMENTO_ACADEMICO": "",
+  "VAR_JEFE_PRESIDENTA_DE_ACADEMIA": "",
+  "Var_PuestoPresidente": "",
+  "VAR_FIRMA_PRESIDENTA_DE_ACADEMIA": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Formato de implementación de estrategias', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_Asignatura": "",
+  "Var_Estrategia": "",
+  "Var_ProgramaNombre": "",
+  "Var_Habilidades": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_DEPARTAMENTO_ACADEMICO": "",
+  "VAR_JEFE_DEPARTAMENTO_ACADEMICO": "",
+  "Var_PuestoJefa": "",
+  "VAR_FIRMA_PRESIDENTA_DE_ACADEMIA": "",
+  "Var_FirmaResponsable": "",
+  "VAR_JEFE_PRESIDENTA_DE_ACADEMIA": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Formato asesorías estudiantes', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_Rol": "",
+  "Var_NombreDeCurso": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_Alcance": "",
+  "Var_funcionesRealizadas": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "Var_PuestoTitular": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Constancia asesoría lugares', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_NombreProyecto": "",
+  "Var_NombreEvento": "",
+  "Var_Nivel": "",
+  "Var_Lugar": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_NumDictamen": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO": "",
+  "Var_PuestoTitular": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Constancia de participación como jurado', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_NombreEvento": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_Nivel": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "Var_PuestoTitular": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Participación de comités', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_NombreEvento": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_Nivel": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "Var_PuestoTitular": "",
+  "VAR_JEFE_SUBDIRECCION_ACADEMICA": "",
+  "VAR_FIRMA_SUBDIRECCION_ACADEMICA": "",
+  "Var_PuestoResponsable": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Oficio de Comisión (ITec)', '{
+  "Var_Fecha": "",
+  "Var_Oficio": "",
+  "Var_Nombre": "",
+  "Var_Cargo": "",
+  "Var_NombreEvento": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_Nivel": "",
+  "Var_Sello": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Constancia de la institución organizadora', '{
+  "Var_NombreInstitucion": "",
+  "Var_LugarEvento": "",
+  "Var_Fecha": "",
+  "Var_Nombre": "",
+  "Var_Cargo": "",
+  "Var_NombreEvento": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_Nivel": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "Var_PuestoTitular": ""
+});
+
+INSERT INTO DOCUMENTO (NOMBRE, DATOS_JSON) VALUES ('Participación en auditorías de sistemas de gestión', '{
+  "Var_Fecha": "",
+  "Var_Nombre": "",
+  "Var_RolAuditor": "",
+  "Var_sistema": "",
+  "Var_FechaInicio": "",
+  "Var_FechaFin": "",
+  "Var_LugarAuditoria": "",
+  "VAR_FIRMA_INSTITUTO_TECNOLOGICO_DE_CULIACAN": "",
+  "VAR_JEFE_INSTITUTO_TECNOLOGICO_DE_CULIACAN": ""
+});

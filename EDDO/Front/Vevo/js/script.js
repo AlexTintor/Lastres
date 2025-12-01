@@ -11,8 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ... aquí siguen todas tus funciones (verificarEstadoDocente, login, pagina, etc.) ...
-
 /*Funcion que se encarga de desplegar la ventana de cerrar Sesion y mandarte al login */
 function desplegarInterfazSalir(){
   const modal = document.getElementById("modalSalida");
@@ -94,12 +92,14 @@ function login(){
 
   function enterEnviar(){
     const inputContra = document.getElementById("password");
-    inputContra.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-          e.preventDefault();
-          btniniciar.click();
-      }
-    });
+    if(inputContra){
+        inputContra.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            btniniciar.click();
+        }
+        });
+    }
   }
 
 
@@ -117,14 +117,13 @@ async function pagina(){
       e.preventDefault();
 
       liPadre.classList.add("active");
-      botonCuenta.classList.remove("active");
+      if(botonCuenta) botonCuenta.classList.remove("active");
       links.forEach(otherLink => {
         if (otherLink !== link) {
           otherLink.parentElement.classList.remove("active");
-          opcionActual = link; 
         }
-      }
-    );
+      });
+      opcionActual = link; 
 
       const page = e.target.getAttribute("data-page");
       loadPage(page);
@@ -132,19 +131,19 @@ async function pagina(){
     });
   });
   const btnSalir = document.getElementById("btnCerrarSesion");
-  btnSalir.addEventListener("click", desplegarInterfazSalir);
+  if(btnSalir) btnSalir.addEventListener("click", desplegarInterfazSalir);
 
 
-  loadPage("inicio.html");
-
-  botonCuenta.addEventListener("click", () => {
-    botonCuenta.classList.add("active");
-    links.forEach(link => {
-      link.parentElement.classList.remove("active"); 
-    });
-    const page = botonCuenta.getAttribute("data-page");
-    loadPage(page);
-  });
+  if(botonCuenta){
+      botonCuenta.addEventListener("click", () => {
+        botonCuenta.classList.add("active");
+        links.forEach(link => {
+          link.parentElement.classList.remove("active"); 
+        });
+        const page = botonCuenta.getAttribute("data-page");
+        loadPage(page);
+      });
+  }
 
 }
 
@@ -182,12 +181,15 @@ async function actualizarDatosCuenta(datos1){
   /* Funcion para agregar un nuevo documento a la tabla de expediente */
 async function agregarRegistroDocumento(expediente, documentos) {
   const tbody = document.querySelector("#tablaDocumentos tbody");
+  if(!tbody) return;
 
   if (!expediente || !expediente.expediente) {
     console.error("No se pudieron obtener los datos del expediente.");
     const lblError = document.getElementById("lblError");
-    lblError.hidden = false;
-    lblError.textContent = "No se pudieron obtener los datos del expediente.";
+    if(lblError){
+        lblError.hidden = false;
+        lblError.textContent = "No se pudieron obtener los datos del expediente.";
+    }
     return;
   }
   
@@ -225,12 +227,15 @@ async function agregarRegistroDocumento(expediente, documentos) {
 /*Fumcopm para agregar reclamos de forma dinamica*/
 function agregarReclamo(reclamos) {
     const tbody = document.querySelector("#tablaReclamos tbody");
+    if(!tbody) return;
     console.log("Reclamos recibidos para agregar:", reclamos);
     if (!reclamos || reclamos.reclamos.length === 0) {
         console.error("No se pudieron obtener los datos de los reclamos.");
         const lblError = document.getElementById("lblErrorReclamo");
-        lblError.hidden = false;
-        lblError.textContent = "No se pudieron obtener los datos de los reclamos.";
+        if(lblError){
+            lblError.hidden = false;
+            lblError.textContent = "No se pudieron obtener los datos de los reclamos.";
+        }
         return;
     }
     reclamos.reclamos.forEach(rec => {
@@ -313,30 +318,42 @@ async function descargarDocumento(nombreDoc){
   .then(blob => {
       const url = window.URL.createObjectURL(blob);
       const link = document.getElementById("linkDescarga");
-      link.href = url;
-      link.download = nombreDoc + ".pdf";
-      link.addEventListener("click", () => {
-            setTimeout(() => {
-              window.URL.revokeObjectURL(link.href);
-            }, 5000); // 5 segundos después de descargar
-          });
-          link.click(); 
-          console.log("Descarga iniciada para:", nombreDoc);
+      if(link){
+          link.href = url;
+          link.download = nombreDoc + ".pdf";
+          link.addEventListener("click", () => {
+                setTimeout(() => {
+                  window.URL.revokeObjectURL(link.href);
+                }, 5000); // 5 segundos después de descargar
+              });
+              link.click(); 
+      } else {
+          // Si no existe el elemento oculto, crear uno temporal
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = nombreDoc + ".pdf";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      }
+      console.log("Descarga iniciada para:", nombreDoc);
   }).catch(err => console.log(err));
 }
 function descargarTodosDocumentos(){
   const btnDescargarTodos = document.getElementById("btnDescargarTodos");
-  btnDescargarTodos.addEventListener("click", async () => {
-    console.log("Iniciando descarga de todos los documentos...");
-    const documentos1 = await traerDatosExpediente();
-    const documentos = documentos1.expediente;
-    console.log("Descargando todos los documentos:", documentos);
-    for (const doc of documentos) {
-      const nombreDoc = doc.Nombre_documento;
-      console.log("Descargando documento:", nombreDoc);
-      await descargarDocumento(nombreDoc);
-    }
-  });
+  if(btnDescargarTodos){
+      btnDescargarTodos.addEventListener("click", async () => {
+        console.log("Iniciando descarga de todos los documentos...");
+        const documentos1 = await traerDatosExpediente();
+        const documentos = documentos1.expediente;
+        console.log("Descargando todos los documentos:", documentos);
+        for (const doc of documentos) {
+          const nombreDoc = doc.Nombre_documento;
+          console.log("Descargando documento:", nombreDoc);
+          await descargarDocumento(nombreDoc);
+        }
+      });
+  }
 }
 
 async function mostrarDocumento(nombreDoc){
@@ -356,16 +373,20 @@ async function mostrarDocumento(nombreDoc){
       const framDoc = document.getElementById("framDoc");
       const btnDescargar = document.getElementById("btnDescargar");
 
-      btnDescargar.href = url;
-      btnDescargar.download = nombreDoc + ".pdf";
-      framDoc.src = url;
+      if(btnDescargar){
+          btnDescargar.href = url;
+          btnDescargar.download = nombreDoc + ".pdf";
+          btnDescargar.addEventListener("click", () => {
+            setTimeout(() => {
+              window.URL.revokeObjectURL(btnDescargar.href);
+            }, 5000); // 5 segundos después de descargar
+          });
+      }
+      
+      if(framDoc) framDoc.src = url;
       const lblError = document.getElementById("lblCargando");
-      lblError.hidden = true;
-      btnDescargar.addEventListener("click", () => {
-        setTimeout(() => {
-          window.URL.revokeObjectURL(btnDescargar.href);
-        }, 5000); // 5 segundos después de descargar
-      });
+      if(lblError) lblError.hidden = true;
+      
   }).catch(err => console.log(err));
 
 }
@@ -569,100 +590,85 @@ async function validarRequi(){
       .then(data => {
           return data.estatus;
           }).catch(error => {
-            lblError.hidden = false;
-            lblError.textContent = "Error de conexión.";
-            btniniciar.innerHTML = "Iniciar Sesión";
+            const lblError = document.getElementById("lblError");
+            if(lblError){
+                lblError.hidden = false;
+                lblError.textContent = "Error de conexión.";
+            }
       });
 }
 
-/* Funcion que cambia de html dependiendo la page */ 
+/* Funcion que cambia de html dependiendo la page*/ 
 function loadPage(page) {
-  const content = document.getElementById("content");
-  
+    const content = document.getElementById("content");
   fetch(`pages/${page}`)
   .then(response => response.text())
   .then(async html => {
       content.innerHTML = html;
 
-    // --- LÓGICA PARA EXPEDIENTE ---
     if (page === "expediente.html") {
       const expediente = await traerDatosExpediente();
       const documentos = await todosDocumentos();
       const btnBuscar = document.getElementById("btnBuscar");
       const inputFiltro = document.getElementById("inputBuscar");
-      
       if(btnBuscar){
         btnBuscar.addEventListener("click", () => {
             const expediente2 = {};
             const listaFiltrada = [];
             const filtro = inputFiltro.value.toLowerCase();
-            
             if(filtro !== ""){
                 documentos.Documentos.forEach(doc => {
-                  if(doc.NOMBRE.toLowerCase().includes(filtro)){
+                if(doc.NOMBRE.toLowerCase().includes(filtro)){
                     listaFiltrada.push(doc);
-                  }
+                }
                 });
-                expediente2.Documentos = listaFiltrada;
-                agregarRegistroDocumento(expediente, expediente2);
-            } else {
-                agregarRegistroDocumento(expediente,documentos);
+            expediente2.Documentos = listaFiltrada;
+            agregarRegistroDocumento(expediente, expediente2);
+            }else{
+            agregarRegistroDocumento(expediente,documentos);
             }
             guardarNombreDoc();
-            
-            // Cuidado: esto descargaría el doc seleccionado previamente al buscar, 
-            // asegúrate si es el comportamiento deseado.
             const nombre_documento = sessionStorage.getItem("documentoSeleccionado");
             if(nombre_documento) descargarDocumento(nombre_documento);
         });
       }
-
       if(inputFiltro){
         inputFiltro.addEventListener("input", () => {
             if(inputFiltro.value === ""){
-                agregarRegistroDocumento(expediente,documentos);
-            } else {
-                if(btnBuscar) btnBuscar.click();
+            agregarRegistroDocumento(expediente,documentos);
+            }else{
+            if(btnBuscar) btnBuscar.click();
             }
         });
       }
-
-      if(expediente && documentos) {
-          agregarRegistroDocumento(expediente,documentos);
-      }
+      if(expediente && documentos) agregarRegistroDocumento(expediente,documentos);
 
       guardarNombreDoc();
       descargarTodosDocumentos();
+
     }
-
-    // --- LÓGICA PARA INICIO (DASHBOARD) ---
     if(page === "inicio.html"){
-      
-      // 1. Asignar ID al título para que la validación pueda cambiarlo a rojo
-      const h2 = content.querySelector("h2");
-      if(h2) h2.id = "tituloBienvenida";
-      
-      // 2. Ejecutar validación de bloqueo (Plaza / Documentos)
-      verificarEstadoDocente();
+        // 1. Asignar ID al título para que la validación pueda cambiarlo a rojo
+        const h2 = content.querySelector("h2");
+        if(h2) h2.id = "tituloBienvenida";
+        
+        // 2. Ejecutar validación de bloqueo (Plaza / Documentos)
+        verificarEstadoDocente();
 
-      // 3. Cargar datos del usuario para el saludo
-      // const validarRequitos = await validarRequi(); // (Código comentado original)
-      const validarRequitos = true; // Dejamos pasar la carga visual, el bloqueo lo hace verificarEstadoDocente
+      //const validarRequitos = await validarRequi();
+      const validarRequitos = true;
       const resultado = await traerDatosCuenta();
 
       if (validarRequitos){
         if(resultado && resultado.estatus && resultado.cuenta){
-            // Manejo seguro si devuelve array o objeto
-            const datosCuenta = Array.isArray(resultado.cuenta) ? resultado.cuenta[0] : resultado.cuenta;
-            const nombreDocente = datosCuenta.NOMBRE + " " + datosCuenta.APELLIDO_PAT + " " + datosCuenta.APELLIDO_MAT;
-            
+            const datos = Array.isArray(resultado.cuenta) ? resultado.cuenta[0] : resultado.cuenta;
+            const nombreDocente = datos.NOMBRE+" "+datos.APELLIDO_PAT+" "+datos.APELLIDO_MAT;
             const saludoElemento = document.getElementById("saludoDocente");
             if (saludoElemento && nombreDocente) {
-              saludoElemento.textContent = `${nombreDocente}`;
+            saludoElemento.textContent = `${nombreDocente}`;
             }
         }
-      } else {
-        // Fallback antiguo (si quisieras usar loadPage("noCumple.html"))
+      }else {
         const btnExpediente = document.getElementById("btnExpediente");
         const btnReclamo = document.getElementById("btnReclamo");
         if(btnExpediente) btnExpediente.style.display = "none";
@@ -671,18 +677,25 @@ function loadPage(page) {
       }
     }
 
-    // --- LÓGICA PARA FIRMA DIGITAL (NUEVO) ---
     if(page === "firma.html"){
         iniciarModuloFirma(); 
     }
 
-    // --- LÓGICA PARA VER DOCUMENTO ---
     if(page === "verDocumento.html"){
       regresarPaginaExpediente();
     }
 
-    // --- LÓGICA PARA RECLAMOS ---
     if (page === "reclamo.html") {
+      /*if(sessionStorage.getItem("reclamos")){
+        const expediente = JSON.parse(sessionStorage.getItem("reclamos"));
+        agregarReclamo(expediente);
+      }else {
+        const expediente = await traerDatosReclamo();
+        if (expediente) {
+          sessionStorage.setItem("reclamos", JSON.stringify(expediente));
+          agregarReclamo(expediente);
+        }
+      }*/
       const expediente = await traerDatosReclamo();
       if (expediente) {
         agregarReclamo(expediente);
@@ -690,7 +703,6 @@ function loadPage(page) {
       }
     }
 
-    // --- LÓGICA PARA CUENTA ---
     if (page === "cuenta.html") {
         const resultado = await traerDatosCuenta();
         if (resultado && resultado.estatus) {
@@ -699,25 +711,20 @@ function loadPage(page) {
         const btncambiarContra = document.getElementById("btnCambiarContra");
         if(btncambiarContra){
             btncambiarContra.addEventListener("click", () => {
-              loadPage("cambiarContra.html");
+            loadPage("cambiarContra.html");
             });
         }
     }
-
-    // --- LÓGICA PARA CHAT ---
     if (page === "chat.html"){
       actualizarChat();
       mandarMsj();
     }
-
-    // --- LÓGICA PARA CAMBIAR CONTRASEÑA ---
     if (page === "cambiarContra.html") {
       cambiarContraActual();
     }
-
   }).catch((error) => {
     console.error("Error al cargar la página:", page, error);
-    if(content) content.innerHTML = "<h2>Error al cargar la página</h2>";
+    content.innerHTML = "<h2>Error al cargar la página</h2>";
   });
 }
 
@@ -761,7 +768,7 @@ async function actualizarChat(){
   const mensajes = await traerMensajes();
   const ventanaMensajes = document.getElementById('ventanaMensajes');
 
-  ventanaMensajes.innerHTML = '';
+  if(ventanaMensajes) ventanaMensajes.innerHTML = '';
   if (!mensajes || !mensajes.estatus) {
     console.error("No se pudieron obtener los mensajes.");
     return;
@@ -794,31 +801,35 @@ function actualizarMsjVentana(msj,tipo,horaMin="00:00"){
         </div>
     `;
 
-    ventanaMensajes.appendChild(tr);
-    inputMsj.value = "";
+    if(ventanaMensajes) ventanaMensajes.appendChild(tr);
+    if(inputMsj) inputMsj.value = "";
 }
 
 function mandarMsj() {
   const btnEnviarMsj = document.getElementById('btnEnviarMsj');
   const inputMsj = document.getElementById('inputMensaje');
 
-  btnEnviarMsj.addEventListener('click', () => {
-    const msj = inputMsj.value.trim(); 
+  if(btnEnviarMsj){
+      btnEnviarMsj.addEventListener('click', () => {
+        const msj = inputMsj.value.trim(); 
 
-    if (msj === "") return; 
-    
-    
-    if(mandarMsjAlBackend(msj)){
-      alert("Error al enviar el mensaje.");
-    }
-    actualizarMsjVentana(msj, "uno");
-  });
-    inputMsj.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        btnEnviarMsj.click();
-    }
-    });
+        if (msj === "") return; 
+        
+        
+        if(mandarMsjAlBackend(msj)){
+          alert("Error al enviar el mensaje.");
+        }
+        actualizarMsjVentana(msj, "uno");
+      });
+  }
+  if(inputMsj){
+      inputMsj.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            btnEnviarMsj.click();
+        }
+        });
+  }
 }
 
 function mandarMsjAlBackend(mensaje) {
@@ -852,38 +863,42 @@ function cambiarContraActual(){
   ver('passwordConfirmar', 'btnVerContraseña3');
 
   const btnCambiar = document.getElementById("btnCambiarContra");
-  btnCambiar.addEventListener("click", () => {
-      const passwordActual = document.getElementById("passwordActual").value;
-      const passwordNueva = document.getElementById("passwordNueva").value;
-      const lblError = document.getElementById("lblError");
-      if(validadarContra('passwordNueva', 'passwordConfirmar')){
-          fetch("http://localhost:5000/cambiarContraActual", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ idUsuario: sessionStorage.getItem("idUsuario"), contraActual: passwordActual, contraNueva: passwordNueva})
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.estatus) {
-                  alert("Contraseña cambiada con éxito.");
-                  loadPage("cuenta.html");
-              } else {
-                  lblError.hidden = false;
-                  lblError.textContent = data.error;
-              }
-          })
-          .catch(error => {
-              console.error("Error:", error);
-          });
-      }
-      
-    });
+  if(btnCambiar){
+      btnCambiar.addEventListener("click", () => {
+          const passwordActual = document.getElementById("passwordActual").value;
+          const passwordNueva = document.getElementById("passwordNueva").value;
+          const lblError = document.getElementById("lblError");
+          if(validadarContra('passwordNueva', 'passwordConfirmar')){
+              fetch("http://localhost:5000/cambiarContraActual", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ idUsuario: sessionStorage.getItem("idUsuario"), contraActual: passwordActual, contraNueva: passwordNueva})
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.estatus) {
+                      alert("Contraseña cambiada con éxito.");
+                      loadPage("cuenta.html");
+                  } else {
+                      lblError.hidden = false;
+                      lblError.textContent = data.error;
+                  }
+              })
+              .catch(error => {
+                  console.error("Error:", error);
+              });
+          }
+          
+        });
+  }
     const btnRegresar = document.getElementById('btnRegresarContra');
-    btnRegresar.addEventListener('click', () => {
-      loadPage('cuenta.html');
-    } );
+    if(btnRegresar){
+        btnRegresar.addEventListener('click', () => {
+        loadPage('cuenta.html');
+        } );
+    }
 }
 
 
@@ -894,48 +909,52 @@ function enviarCodigo() {
     const lblError = document.getElementById("lblError");
     inputEmail = document.getElementById("email");
 
-    inputEmail.addEventListener("click", () => {
-        lblError.hidden = true;
-    });
-    btnEnviarCodigo.addEventListener("click", async () => {
-        const correo = inputEmail.value;
-        
-        if(!validarCorreo(correo)){
-            lblError.hidden = false;
-            lblError.textContent = "Correo inválido.";
-            return;
-        }
-        btnEnviarCodigo.innerHTML = "ENVIANDO...";
-        if(!await verificarCorreo(correo)){
-            lblError.hidden = false;
-            lblError.textContent = "El correo no está registrado.";
-            btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
-            return;
-        }
-        fetch("http://localhost:5000/enviar-codigo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ correo: correo })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.estatus) {
-                sessionStorage.setItem("correo", correo);
-                sessionStorage.setItem("codigo", data.codigo);
-                window.location.href = "ingresarCodigo.html";
-                btnEnviarCodigo.innerHTML = "Enviar Código";
-            } else {
-                alert("Error: " + data.error);
-                btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
-            }
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
+    if(inputEmail){
+        inputEmail.addEventListener("click", () => {
+        if(lblError) lblError.hidden = true;
         });
-      });
+    }
+    if(btnEnviarCodigo){
+        btnEnviarCodigo.addEventListener("click", async () => {
+            const correo = inputEmail.value;
+            
+            if(!validarCorreo(correo)){
+                lblError.hidden = false;
+                lblError.textContent = "Correo inválido.";
+                return;
+            }
+            btnEnviarCodigo.innerHTML = "ENVIANDO...";
+            if(!await verificarCorreo(correo)){
+                lblError.hidden = false;
+                lblError.textContent = "El correo no está registrado.";
+                btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
+                return;
+            }
+            fetch("http://localhost:5000/enviar-codigo", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ correo: correo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.estatus) {
+                    sessionStorage.setItem("correo", correo);
+                    sessionStorage.setItem("codigo", data.codigo);
+                    window.location.href = "ingresarCodigo.html";
+                    btnEnviarCodigo.innerHTML = "Enviar Código";
+                } else {
+                    alert("Error: " + data.error);
+                    btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                btnEnviarCodigo.innerHTML = "ENVIAR CODIGO";
+            });
+        });
+    }
     regresar('btnRegresar', 'inicioSesion.html');
   
   function validarCorreo(email){
@@ -973,16 +992,18 @@ function validarCodigo(){
     const lblError = document.getElementById("lblError");
     let codigo = sessionStorage.getItem('codigo');
     
-    btnEnviarCodigo.addEventListener('click', (e) => {
-        e.preventDefault();
-        const codigoIngresado = cells.map(c => c.value).join('');
-        if(codigoIngresado === codigo){
-            window.location.href = "restablecerContra.html";
-        } else {
-            lblError.hidden = false;
-            lblError.textContent = "Código incorrecto. Inténtalo de nuevo.";
-        }
-    });
+    if(btnEnviarCodigo){
+        btnEnviarCodigo.addEventListener('click', (e) => {
+            e.preventDefault();
+            const codigoIngresado = cells.map(c => c.value).join('');
+            if(codigoIngresado === codigo){
+                window.location.href = "restablecerContra.html";
+            } else {
+                lblError.hidden = false;
+                lblError.textContent = "Código incorrecto. Inténtalo de nuevo.";
+            }
+        });
+    }
     regresar('btnRegresar', 'recuperarContra.html');
 
     if (cells.length > 0) {
@@ -991,7 +1012,7 @@ function validarCodigo(){
 
     cells.forEach((cell, index) => {
         cell.addEventListener('input', () => {
-            lblError.hidden = true;
+            if(lblError) lblError.hidden = true;
             if (cell.value.length === 1 && index < cells.length - 1) {
                 cells[index + 1].focus();
             }
@@ -1007,9 +1028,11 @@ function validarCodigo(){
 
 function regresar(btnId, page){
   const btnRegresar = document.getElementById(btnId);
-  btnRegresar.addEventListener("click", () => {
-    window.location.href = page;
-  });
+  if(btnRegresar){
+      btnRegresar.addEventListener("click", () => {
+        window.location.href = page;
+      });
+  }
 
 }
 function ver(inputId, btnId) {
@@ -1024,8 +1047,14 @@ function ver(inputId, btnId) {
 
 function validadarContra(password01, password02){
   const lblError = document.getElementById("lblError");
-  const password1 = document.getElementById(password01).value;
-  const password2 = document.getElementById(password02).value;
+  const p1 = document.getElementById(password01);
+  const p2 = document.getElementById(password02);
+
+  if(!p1 || !p2) return false;
+
+  const password1 = p1.value;
+  const password2 = p2.value;
+  
   if(password1 === "" || password2 === ""){
     lblError.hidden = false;
     lblError.textContent = "Ambos campos son obligatorios.";
@@ -1048,37 +1077,43 @@ function restablecerContra(){
   ver('password1', 'btnVerContrasea1');
 
   const btnRestablecer = document.getElementById("btnRestablecer");
-  btnRestablecer.addEventListener("click", () => {
+  if(btnRestablecer){
+      btnRestablecer.addEventListener("click", () => {
 
-      if(validadarContra('password1', 'password2')){
-          lblError.hidden = true;
+        if(validadarContra('password1', 'password2')){
+            const lblError = document.getElementById("lblError");
+            if(lblError) lblError.hidden = true;
+            const password = document.getElementById("password1").value;
 
-          fetch("http://localhost:5000/cambiar-contrasena", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ correo: sessionStorage.getItem("correo"), contraNueva: password})
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data) {
-                  alert("Contraseña cambiada con éxito.");
-                  window.location.href = "inicioSesion.html";
-              } else {
-                  alert("Error: " + data);
-              }
-          })
-          .catch(error => {
-              console.error("Error:", error);
-          });
+            fetch("http://localhost:5000/cambiar-contrasena", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ correo: sessionStorage.getItem("correo"), contraNueva: password})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    alert("Contraseña cambiada con éxito.");
+                    window.location.href = "inicioSesion.html";
+                } else {
+                    alert("Error: " + data);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
 
         }
-    });
+        });
+  }
     const btnRegresar = document.getElementById("btnRegresar");
-    btnRegresar.addEventListener("click", () => {
-      window.location.href = "inicioSesion.html";
-    }); 
+    if(btnRegresar){
+        btnRegresar.addEventListener("click", () => {
+        window.location.href = "inicioSesion.html";
+        }); 
+    }
 }
 
 async function traerDepas(){
@@ -1103,7 +1138,7 @@ async function traerDepas(){
 }
 
 /* ==========================================================================
-   NUEVA FUNCIONALIDAD 1: VERIFICAR ESTADO (BLOQUEO DE MENÚ)
+   NUEVA FUNCIONALIDAD: VALIDACIÓN DE REQUISITOS (BLOQUEO)
    ========================================================================== */
 function verificarEstadoDocente() {
     const id = sessionStorage.getItem("idUsuario");
@@ -1118,8 +1153,9 @@ function verificarEstadoDocente() {
     .then(data => {
         // Elementos a manipular
         const titulo = document.getElementById("tituloBienvenida");
-        const menuExpediente = document.getElementById("liExpediente"); // Asegúrate de ponerle este ID en el HTML
-        const menuReclamo = document.getElementById("liReclamo");       // Asegúrate de ponerle este ID en el HTML
+        const menuExpediente = document.getElementById("liExpediente");
+        const menuReclamo = document.getElementById("liReclamo");
+        const menuFirma = document.getElementById("liFirma");
         
         // Crear alerta visual si no existe
         let divAlerta = document.getElementById("alertaEstado");
@@ -1139,7 +1175,7 @@ function verificarEstadoDocente() {
         }
 
         if (data.bloqueado) {
-            // 1. Mostrar Alerta Roja
+            // 1. Configurar Alerta Roja
             if(divAlerta) {
                 divAlerta.style.display = "block";
                 divAlerta.style.backgroundColor = "#ffebee"; // Rojo claro
@@ -1148,7 +1184,7 @@ function verificarEstadoDocente() {
                 divAlerta.innerHTML = `<h2 style="margin:0">⛔ ATENCIÓN</h2><p style="font-size:1.2em">${data.mensaje}</p>`;
             }
 
-            // 2. Cambiar título de bienvenida
+            // 2. Cambiar título de bienvenida si existe
             if(titulo) {
                 titulo.innerText = "ACCESO RESTRINGIDO";
                 titulo.style.color = "red";
@@ -1157,19 +1193,22 @@ function verificarEstadoDocente() {
             // 3. BLOQUEAR EL MENÚ (Ocultar opciones)
             if(menuExpediente) menuExpediente.style.display = "none";
             if(menuReclamo) menuReclamo.style.display = "none";
+            // Opcional: Bloquear firma también si quieres ser estricto
+            // if(menuFirma) menuFirma.style.display = "none"; 
 
         } else {
             // USUARIO CUMPLE TODO (Restaurar)
             if(divAlerta) divAlerta.style.display = "none";
             if(menuExpediente) menuExpediente.style.display = "block";
             if(menuReclamo) menuReclamo.style.display = "block";
+            if(menuFirma) menuFirma.style.display = "block";
         }
     })
     .catch(err => console.error("Error verificando estado:", err));
 }
 
 /* ==========================================================================
-   NUEVA FUNCIONALIDAD 2: MÓDULO DE FIRMA
+   NUEVA FUNCIONALIDAD: MÓDULO DE FIRMA
    ========================================================================== */
 function iniciarModuloFirma() {
     const id = sessionStorage.getItem("idUsuario");
@@ -1183,11 +1222,11 @@ function iniciarModuloFirma() {
         input: document.getElementById("inputFirma")
     };
     
-    if(!els.img) return; // Si no cargó el HTML, salir
+    if(!els.img) return; // Si no cargó el HTML de firma, salir
 
     let urlReal = "";
 
-    // Cargar firma actual
+    // Cargar estado actual
     fetch("http://localhost:5000/obtener-firma", {
         method: "POST", headers: {"Content-Type": "application/json"},
         body: JSON.stringify({idUsuario: id})

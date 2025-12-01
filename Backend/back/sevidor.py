@@ -514,5 +514,86 @@ def traerDatosDocumento():
         return jsonify({"estatus": False, "error": "No encontrado"}), 404
     except Exception as e: return jsonify({"estatus": False, "error": str(e)}), 500
 
+# --- VALIDACIÓN DE ESTADO (BLOQUEO DE ACCIONES) ---
+
+@app.route('/verificar-estado', methods=['POST'])
+def verificar_estado():
+    data = request.get_json()
+    idUsuario = data.get("idUsuario")
+    
+    # Respuesta por defecto: Todo bien
+    respuesta = {
+        "bloqueado": False,
+        "mensaje": "Bienvenido",
+        "color": "black" 
+    }
+
+    # 1. ¿Es un docente? (Si es Jefe, no aplicamos restricciones)
+    conexion_eddo = conectar_bd("EDDO")
+    if not conexion_eddo: return jsonify({"error": "Error EDDO"}), 500
+    
+    cursor = conexion_eddo.cursor()
+    cursor.execute("SELECT CORREO FROM DOCENTE WHERE ID_DOCENTE = ?", (idUsuario,))
+    row_docente = cursor.fetchone()
+    conexion_eddo.close()
+
+    if not row_docente:
+        # Si no está en tabla DOCENTE, asumimos que es Jefe y no lo bloqueamos
+        return jsonify(respuesta)
+    
+    correo_docente = row_docente[0]
+
+    # 2. VALIDAR PLAZA (BDTEC)
+    conexion_tec = conectar_bd("BDTEC")
+    if conexion_tec:
+        cursor = conexion_tec.cursor()
+        cursor.execute("""
+            SELECT P.HORARIO 
+            FROM EMPLEADO E 
+            INNER JOIN PLAZA P ON E.ID_PLAZA = P.ID_PLAZA 
+            WHERE E.CORREO = ?""", (correo_docente,))
+        row_tec = cursor.fetchone()
+        conexion_tec.close()
+
+        if row_tec:
+            horario = row_tec[0]
+            if "Tiempo Completo" not in str(horario):
+                return jsonify({
+                    "bloqueado": True,
+                    "mensaje": f"ACCESO LIMITADO: Tu plaza '{horario}' no cumple con el requisito 'Tiempo Completo'.",
+                    "color": "#e74c3c" 
+                })
+        else:
+            return jsonify({
+                "bloqueado": True,
+                "mensaje": "ACCESO LIMITADO: No se encontró registro de empleado activo en el TEC.",
+                "color": "#e74c3c"
+            })
+
+    # 3. VALIDAR REQUISITOS DE INICIO (BDEDD)
+    conexion_edd = conectar_bd("BDEDD")
+    if conexion_edd:
+        cursor = conexion_edd.cursor()
+        
+        # A. Contamos cuántos requisitos pide la convocatoria actual (ID 1)
+        cursor.execute("SELECT COUNT(*) FROM REQUISITO_CONVO WHERE ID_CONVOCATORIA = 1")
+        total_necesarios = cursor.fetchone()[0]
+
+        # B. Contamos cuántos ha subido el docente
+        cursor.execute("SELECT COUNT(*) FROM DOCENTE_REQUISITOS WHERE ID_DOCENTE = ? AND ID_CONVOCATORIA = 1", (idUsuario,))
+        total_subidos = cursor.fetchone()[0]
+        
+        conexion_edd.close()
+
+        # Si tiene menos de los necesarios
+        if total_subidos < total_necesarios:
+             return jsonify({
+                "bloqueado": True,
+                "mensaje": f"NO CUMPLES CON LOS REQUISITOS DE INICIO ({total_subidos}/{total_necesarios} entregados).",
+                "color": "#e74c3c" 
+            })
+
+    return jsonify(respuesta)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
